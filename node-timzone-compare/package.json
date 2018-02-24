@@ -1,0 +1,25 @@
+{
+  "name": "tzdemo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "canvas": "^1.6.9",
+    "jquery": "^3.3.1",
+    "jsdom": "^11.6.2",
+    "jsts": "^1.6.0",
+    "moment-timezone-all": "^0.5.5",
+    "node-stopwatch": "0.0.1",
+    "pg": "^7.4.1",
+    "shapefile": "^0.6.6",
+    "table": "^4.0.2"
+  }
+}
