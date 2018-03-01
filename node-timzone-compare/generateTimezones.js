@@ -1,7 +1,11 @@
 const fs = require('fs');
-const { JSDOM } = require('jsdom');
+const {
+    JSDOM
+} = require('jsdom');
 const _ = require('lodash');
-const { table } = require('table');
+const {
+    table
+} = require('table');
 
 function generateTimezones(sourceFilename, parseTimezone) {
     const data = getTimezones(sourceFilename, parseTimezone);
@@ -26,7 +30,10 @@ function parseGoogleTimezone(content) {
     return [...dom.window.document.querySelectorAll('div[jsname="wQNmvb"]')].map(div => {
         const id = div.getAttribute('data-value');
         const name = div.querySelector('content').textContent;
-        return {id, name};
+        return {
+            id,
+            name
+        };
     });
 }
 
@@ -35,15 +42,28 @@ function parseLMTimezone(content) {
     return [...dom.window.document.querySelectorAll('option')].map(div => {
         const id = div.getAttribute('value');
         const name = div.textContent;
-        return {id, name};
+        return {
+            id,
+            name
+        };
     });
 }
 
 function parseAllTimezone(content) {
-    return content.split('\r\n').map(row => { 
+    return content.split('\r\n').map(row => {
         const data = _.compact(row.split('\t'));
-        return {id: data[0].trim(), name: data[1].trim()};
-    });  
+        return {
+            id: data[0].trim(),
+            name: data[1].trim()
+        };
+    });
+}
+
+function parseDuplication(content) {
+    return [...content.split('\n').map(row => {
+        const data = _.compact(row.split(','));
+        return data;
+    })];
 }
 
 function nameOrDefault(content, d = '') {
@@ -54,35 +74,56 @@ function csv(rows) {
     return rows.map(row => row.map(s => s.includes(' ') ? `"${s}"` : s).join(',')).join('\r\n');
 }
 
-function compare(all, lm, g, matchedOnly = true, useCsv=true) {
-    const result = [['id', 'logicmonitor', 'google']];
-    for(let item of [...all]) {
+function compare(all, lm, g, matchedOnly = true, useCsv = true) {
+    const result = [
+        ['id', 'logicmonitor', 'google']
+    ];
+    for (let item of [...all]) {
         const lmItem = _.find(lm, t => t.id === item.id);
         const gItem = _.find(g, t => t.id === item.id);
-        if(matchedOnly && _.isUndefined(lmItem) && _.isUndefined(gItem)) {
+        if (matchedOnly && _.isUndefined(lmItem) && _.isUndefined(gItem)) {
             continue;
         }
         result.push([item.id, nameOrDefault(lmItem), nameOrDefault(gItem)]);
     }
 
     let filename = matchedOnly ? 'compare_matched' : 'compare_all';
-    if(useCsv) filename += '_csv';
+    if (useCsv) filename += '_csv';
 
     const output = useCsv ? csv(result) : table(result);
     return writeTableDataToFile(filename, output)
 }
 
+function findGoogleItem(googleTimezones, id) {
+    return _.find(googleTimezones, t => t.id === id);
+}
+
 function compareAndSort(all, lm, g, useCsv) {
     const result = [];
-    for(let item of [...all]) {
+    const duplications = getTimezones('duplicated_timezone', parseDuplication);
+
+    for (let item of [...all]) {
         const lmItem = _.find(lm, t => t.id === item.id);
-        const gItem = _.find(g, t => t.id === item.id);
-        if(_.isUndefined(lmItem) && _.isUndefined(gItem)) {
+        const gItem = findGoogleItem(g, item.id);
+        if (_.isUndefined(lmItem) && _.isUndefined(gItem)) {
             continue;
         }
 
         const lmName = nameOrDefault(lmItem);
-        const gName = nameOrDefault(gItem);
+        let gName = nameOrDefault(gItem);
+
+        if (gName === '') {
+            const duplicationRow = duplications.find(d => d.includes(item.id));
+            if (!_.isNil(duplicationRow)) {
+                gName = _.first(_.compact(duplicationRow.map(d => {
+                    const t = findGoogleItem(g, d);
+                    return t ? t.name : '';
+                })).filter(n => n !== ''));
+            }
+        }
+
+        gName = gName || '';
+
         const mergedName = gName || lmName;
         result.push([item.id, lmName, gName, mergedName]);
     }
@@ -90,44 +131,80 @@ function compareAndSort(all, lm, g, useCsv) {
     result.sort((a, b) => {
         const t1 = getUTC(a[3]) || getGMT(a[3]);
         const t2 = getUTC(b[3]) || getGMT(b[3]);
-        if(_.isNil(t1) && _.isNil(t2)) return 0;
-        if(_.isNil(t1) && !_.isNil(t2)) return -1;
-        if(!_.isNil(t1) && _.isNil(t2)) return 1;
+        if (_.isNil(t1) && _.isNil(t2)) return 0;
+        if (_.isNil(t1) && !_.isNil(t2)) return -1;
+        if (!_.isNil(t1) && _.isNil(t2)) return 1;
         return +(t1.replace(':', '')) - +(t2.replace(':', ''));
     });
 
     result.forEach(row => {
         const timezone = row[3];
         const utc = getUTCExpr(timezone);
-        if(!_.isNull(utc)) {
+        if (!_.isNull(utc)) {
             row[3] = row[3].replace(utc, `(${utc})`);
             row[3] = row[3].replace('UTC', 'GMT');
         }
     });
 
     let filename = 'compare_matched_sort';
-    if(useCsv) filename += '_csv';
+    if (useCsv) filename += '_csv';
 
     const output = useCsv ? csv(result) : table(result);
     return writeTableDataToFile(filename, output)
 }
 
 function getUTC(str) {
-    if(str == 'GMT') str = 'UTC-00:00 ';
+    if (str == 'GMT') str = 'UTC-00:00 ';
     const matches = str.match(/(?<=UTC)[\-|\+\d|:]+(?= )/g);
     return matches === null ? null : matches[0];
 }
 
 function getUTCExpr(str) {
-    if(str == 'GMT') str = 'UTC-00:00';
+    if (str == 'GMT') str = 'UTC-00:00';
     const matches = str.match(/UTC[\-|\+\d|:]+(?= )/g);
     return matches === null ? null : matches[0];
 }
 
 function getGMT(str) {
-    if(str == 'UTC') str = '(GMT+00:00)';
+    if (str == 'UTC') str = '(GMT+00:00)';
     const matches = str.match(/(?<=GMT)[\+|\-|\d|:]+(?=\))/g);
     return matches === null ? null : matches[0];
+}
+
+function formattedTimeZoneName(item) {
+    return `${item.id} (${item.name})`;
+}
+
+function findLMAlt(lmtzs, id, dups) {
+    if (id === 'Australia/South') {
+        console.log(id);
+    }
+    const dupRow = _.find(dups, r => r.includes(id));
+    if (_.isUndefined(dupRow)) return [];
+
+    const lmItems = _.filter(lmtzs, lmr => dupRow.includes(lmr.id));
+    return lmItems || [];
+}
+
+function compareBasedOnGoogle(filename, gtzs, lmtzs, dups) {
+    const result = [
+        ["ID", "Google Name", "LogicMonitor Name"]
+    ];
+    for (let gtz of gtzs) {
+        let lmItems = findLMAlt(lmtzs, gtz.id, dups);
+        let lmName = lmItems.map(i => formattedTimeZoneName(i)).join(', ');
+        _.remove(lmtzs, i => lmItems.includes(i));
+
+        const gtzName = gtz.name.includes(' ') ? `"${gtz.name}"` : gtz.name;
+        result.push([gtz.id, gtz.name, lmName]);
+    }
+
+    const notMatchedResult = [...lmtzs.map(item => [item.id, item.name])];
+
+    const output = csv(result);
+    const output_notMatched = csv(notMatchedResult);
+    writeTableDataToFile(filename, output);
+    writeTableDataToFile(filename + '_not_matched', output_notMatched);
 }
 
 /** generate formatted timezones */
@@ -138,5 +215,8 @@ function getGMT(str) {
 const lmTimezones = getTimezones('lmtimezones', parseLMTimezone);
 const gTimezones = getTimezones('gtimezones', parseGoogleTimezone);
 const allTimezones = getTimezones('alltimezones', parseAllTimezone);
+const duplications = getTimezones('duplicated_timezone', parseDuplication);
 //compare(allTimezones, lmTimezones, gTimezones, true, true);
-compareAndSort(allTimezones, lmTimezones, gTimezones, true);
+//compareAndSort(allTimezones, lmTimezones, gTimezones, true);
+
+compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications);
