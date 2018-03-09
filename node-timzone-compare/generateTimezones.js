@@ -1,11 +1,15 @@
 const fs = require('fs');
-const {
-    JSDOM
-} = require('jsdom');
 const _ = require('lodash');
+const { table } = require('table');
 const {
-    table
-} = require('table');
+    parseGoogleTimezone, 
+    parseLMTimezone, 
+    parseAllTimezone, 
+    parseDuplication, 
+    parseTimezoneOffsets,
+    parseLMInUsingTimezones,
+    parseUniqLMInUsingTimezones
+} = require('./utils/contentParser')
 
 function generateTimezones(sourceFilename, parseTimezone) {
     const data = getTimezones(sourceFilename, parseTimezone);
@@ -23,47 +27,6 @@ function getTimezones(sourceFilename, parseTimezone) {
     const content = fs.readFileSync(`./timezones/${sourceFilename}.html`, 'utf-8');
     const data = parseTimezone(content);
     return data;
-}
-
-function parseGoogleTimezone(content) {
-    const dom = new JSDOM(content);
-    return [...dom.window.document.querySelectorAll('div[jsname="wQNmvb"]')].map(div => {
-        const id = div.getAttribute('data-value');
-        const name = div.querySelector('content').textContent;
-        return {
-            id,
-            name
-        };
-    });
-}
-
-function parseLMTimezone(content) {
-    const dom = new JSDOM(content);
-    return [...dom.window.document.querySelectorAll('option')].map(div => {
-        const id = div.getAttribute('value');
-        const name = div.textContent;
-        return {
-            id,
-            name
-        };
-    });
-}
-
-function parseAllTimezone(content) {
-    return content.split('\r\n').map(row => {
-        const data = _.compact(row.split('\t'));
-        return {
-            id: data[0].trim(),
-            name: data[1].trim()
-        };
-    });
-}
-
-function parseDuplication(content) {
-    return [...content.split('\n').map(row => {
-        const data = _.compact(row.split(','));
-        return data;
-    })];
 }
 
 function nameOrDefault(content, d = '') {
@@ -96,6 +59,10 @@ function compare(all, lm, g, matchedOnly = true, useCsv = true) {
 
 function findGoogleItem(googleTimezones, id) {
     return _.find(googleTimezones, t => t.id === id);
+}
+
+function findLMItem(lmTimezones, id) {
+    return _.find(lmTimezones, t => t.id === id);
 }
 
 function compareAndSort(all, lm, g, useCsv) {
@@ -176,9 +143,6 @@ function formattedTimeZoneName(item) {
 }
 
 function findLMAlt(lmtzs, id, dups) {
-    if (id === 'Australia/South') {
-        console.log(id);
-    }
     const dupRow = _.find(dups, r => r.includes(id));
     if (_.isUndefined(dupRow)) return [];
 
@@ -186,25 +150,66 @@ function findLMAlt(lmtzs, id, dups) {
     return lmItems || [];
 }
 
-function compareBasedOnGoogle(filename, gtzs, lmtzs, dups) {
+function findOffset(id, timezoneOffsets) {
+    if(id === 'GMT+2') return 2;
+
+    const tzOffset = timezoneOffsets.find(offset => offset.id === id);
+    if(_.isUndefined(tzOffset))
+        console.log(id);
+
+    return Number(tzOffset.offset);
+}
+
+function compareBasedOnGoogle(filename, gtzs, lmtzs, dups, tzoffsets) {
     const result = [
-        ["ID", "Google Name", "LogicMonitor Name"]
+        ["ID", "Google Name", "LogicMonitor Name", "Offset"]
     ];
     for (let gtz of gtzs) {
+        const tzOffset = findOffset(gtz.id, tzoffsets);
         let lmItems = findLMAlt(lmtzs, gtz.id, dups);
         let lmName = lmItems.map(i => formattedTimeZoneName(i)).join(', ');
         _.remove(lmtzs, i => lmItems.includes(i));
 
         const gtzName = gtz.name.includes(' ') ? `"${gtz.name}"` : gtz.name;
-        result.push([gtz.id, gtz.name, lmName]);
+        result.push([gtz.id, gtz.name, lmName, tzOffset.toString()]);
     }
 
-    const notMatchedResult = [...lmtzs.map(item => [item.id, item.name])];
+    const notMatchedResult = [...lmtzs.map(item => [item.id, item.name, findOffset(item.id, tzoffsets).toString()])];
 
     const output = csv(result);
     const output_notMatched = csv(notMatchedResult);
     writeTableDataToFile(filename, output);
     writeTableDataToFile(filename + '_not_matched', output_notMatched);
+}
+
+function compareCommonUsed(commonTimezones, googleTimezones, lmTimezones, tzoffsets, duplications) {
+    const result = [['ID', 'Google Name', 'LM Name', 'Account Count', 'Offset']];
+    commonTimezones.map(tz => {
+        const items = _.entries(tz);
+        const id = items[0][0];
+        const count = items[0][1].toString();
+        let gtz = findGoogleItem(googleTimezones, id);
+        
+        if(!gtz) {
+            const duplicationItems = duplications.find(row => row.includes(id));
+            if(duplicationItems) {
+                gtz = duplicationItems.map(di => findGoogleItem(googleTimezones, di)).find(item => !_.isUndefined(item));
+            }
+        }
+
+        // console.log(gtz, !gtz, _.isUndefined(gtz));
+        const gname = (gtz ? gtz.name : '');
+        const lmtz = findLMItem(lmTimezones, id);
+        const lmname = lmtz ? lmtz.name : '';
+        const offset = findOffset(id, tzoffsets).toString();
+        const r = [id, gname, lmname, count, offset]; 
+
+        // console.log(r);
+        return r;
+    }).forEach(tz => result.push(tz));
+
+    result.sort((t1, t2) => Number(t1[4]) - Number(t2[4]));
+    return result;
 }
 
 /** generate formatted timezones */
@@ -216,7 +221,12 @@ const lmTimezones = getTimezones('lmtimezones', parseLMTimezone);
 const gTimezones = getTimezones('gtimezones', parseGoogleTimezone);
 const allTimezones = getTimezones('alltimezones', parseAllTimezone);
 const duplications = getTimezones('duplicated_timezone', parseDuplication);
+const timezoneOffsets = getTimezones('timezone_offsets', parseTimezoneOffsets);
+const timezonesInUsing = getTimezones('lm_timezones_in_use', parseLMInUsingTimezones);
 //compare(allTimezones, lmTimezones, gTimezones, true, true);
 //compareAndSort(allTimezones, lmTimezones, gTimezones, true);
+// compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
 
-compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications);
+const list = compareCommonUsed(timezonesInUsing, gTimezones, lmTimezones, timezoneOffsets, duplications);
+const output = csv(list);
+writeTableDataToFile('common_used_timezones', output);

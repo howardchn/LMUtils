@@ -1,11 +1,11 @@
-Australia/Eucla,Australia/Eucla
-Europe/Amsterdam,"Europe/Amsterdam, Copenhagen, Oslo, Paris"
-Europe/Athens,"Europe/Athens, Bucharest, Chisinau, Helsinki"
-Europe/Samara,Europe/Samara
-HST,"UTC-10:00 Hawaii"
-MST,"UTC-07:00 Arizona, Chihuahua, La Paz, Mazatlan, Mountain Time (US & Canada)"
-EST,"UTC-05:00 Bogota, Lima, Quito, Eastern Time (US & Canada), Indiana (East)"
-America/Caracas,"UTC-04:30 Caracas"
-Atlantic/Azores,"UTC-01:00 Azores, Cape Verde Is."
-GMT+2,"UTC+02:00 Helsinki, Athens, Bucharest, Cairo, Pretoria, Sofia"
-Asia/Kabul,"UTC+04:30 Kabul"
+Australia/Eucla,Australia/Eucla,8.75
+Europe/Amsterdam,"Europe/Amsterdam, Copenhagen, Oslo, Paris",1
+Europe/Athens,"Europe/Athens, Bucharest, Chisinau, Helsinki",2
+Europe/Samara,Europe/Samara,4
+HST,"UTC-10:00 Hawaii",-10
+MST,"UTC-07:00 Arizona, Chihuahua, La Paz, Mazatlan, Mountain Time (US & Canada)",-7
+EST,"UTC-05:00 Bogota, Lima, Quito, Eastern Time (US & Canada), Indiana (East)",-5
+America/Caracas,"UTC-04:30 Caracas",-4
+Atlantic/Azores,"UTC-01:00 Azores, Cape Verde Is.",-1
+GMT+2,"UTC+02:00 Helsinki, Athens, Bucharest, Cairo, Pretoria, Sofia",2
+Asia/Kabul,"UTC+04:30 Kabul",4.5
