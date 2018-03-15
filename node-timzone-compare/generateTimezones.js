@@ -8,7 +8,8 @@ const {
     parseDuplication, 
     parseTimezoneOffsets,
     parseLMInUsingTimezones,
-    parseUniqLMInUsingTimezones
+    parseUniqLMInUsingTimezones,
+    parseAbbrs
 } = require('./utils/contentParser')
 
 function generateTimezones(sourceFilename, parseTimezone) {
@@ -34,6 +35,7 @@ function nameOrDefault(content, d = '') {
 }
 
 function csv(rows) {
+    console.log(rows);
     return rows.map(row => row.map(s => s.includes(' ') ? `"${s}"` : s).join(',')).join('\r\n');
 }
 
@@ -63,6 +65,13 @@ function findGoogleItem(googleTimezones, id) {
 
 function findLMItem(lmTimezones, id) {
     return _.find(lmTimezones, t => t.id === id);
+}
+
+function findAbbrs(abbrs, id) {
+    const abbr = _.find(abbrs, t => t.id === id);
+    if(_.isUndefined(abbr)) {
+        return {id: id, sdt: '', dst: '', useDst: 'unknown'}
+    } else return abbr;
 }
 
 function compareAndSort(all, lm, g, useCsv) {
@@ -182,8 +191,8 @@ function compareBasedOnGoogle(filename, gtzs, lmtzs, dups, tzoffsets) {
     writeTableDataToFile(filename + '_not_matched', output_notMatched);
 }
 
-function compareCommonUsed(commonTimezones, googleTimezones, lmTimezones, tzoffsets, duplications) {
-    const result = [['ID', 'Google Name', 'LM Name', 'Account Count', 'Offset']];
+function compareCommonUsed(commonTimezones, googleTimezones, lmTimezones, tzoffsets, duplications, abbrs) {
+    const result = [['ID', 'Google Name', 'LM Name', 'Account Count', 'Offset','Standard Time Abbr', 'Daylight Saving Abbr', 'Use Dst']];
     commonTimezones.map(tz => {
         const items = _.entries(tz);
         const id = items[0][0];
@@ -202,9 +211,10 @@ function compareCommonUsed(commonTimezones, googleTimezones, lmTimezones, tzoffs
         const lmtz = findLMItem(lmTimezones, id);
         const lmname = lmtz ? lmtz.name : '';
         const offset = findOffset(id, tzoffsets).toString();
-        const r = [id, gname, lmname, count, offset]; 
+        const abbr = findAbbrs(abbrs, id);
 
-        // console.log(r);
+        const r = [id, gname, lmname, count, offset, abbr.sdt, abbr.dst, abbr.useDst]; 
+
         return r;
     }).forEach(tz => result.push(tz));
 
@@ -223,10 +233,24 @@ const allTimezones = getTimezones('alltimezones', parseAllTimezone);
 const duplications = getTimezones('duplicated_timezone', parseDuplication);
 const timezoneOffsets = getTimezones('timezone_offsets', parseTimezoneOffsets);
 const timezonesInUsing = getTimezones('lm_timezones_in_use', parseLMInUsingTimezones);
+const timezoneAbbrs = getTimezones('timezone_abbrs', parseAbbrs);
+
 //compare(allTimezones, lmTimezones, gTimezones, true, true);
 //compareAndSort(allTimezones, lmTimezones, gTimezones, true);
 // compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
 
-const list = compareCommonUsed(timezonesInUsing, gTimezones, lmTimezones, timezoneOffsets, duplications);
-const output = csv(list);
-writeTableDataToFile('common_used_timezones', output);
+// const list = compareCommonUsed(timezonesInUsing, gTimezones, lmTimezones, timezoneOffsets, duplications, timezoneAbbrs);
+// const output = csv(list);
+// writeTableDataToFile('common_used_timezones', output);
+
+const gtzids = gTimezones.map(tz => {
+    const id = tz.id;
+    let name = tz.name;
+    const nameStart = name.indexOf(') ')
+    if(nameStart >= 0) {
+        name = name.substr(nameStart + 2);
+    }
+    return {id, name};
+});
+const output = JSON.stringify(gtzids);
+writeTableDataToFile('google_timezone_ids', output);

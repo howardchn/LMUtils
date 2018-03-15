@@ -1,45 +1,45 @@
-ID,"Google Name","LM Name","Account Count",Offset
-Pacific/Samoa,"(GMT-11:00) Pago Pago","UTC-11:00 Coordinated Universal Time-11, Samoa",2,-11
-US/Hawaii,"(GMT-10:00) Hawaii Time",Hawaii,3,-10
-HST,,"UTC-10:00 Hawaii",2,-10
-AST,"(GMT-09:00) Alaska Time","UTC-09:00 Alaska",3,-9
-Canada/Pacific,"(GMT-08:00) Pacific Time - Vancouver",Canada/Pacific,8,-8
-PST,"(GMT-08:00) Pacific Time","UTC-08:00 Baja California, Pacific Time (US & Canada)",109,-8
-America/Los_Angeles,"(GMT-08:00) Pacific Time",America/Los_Angeles,417,-8
-PNT,"(GMT-07:00) Mountain Time - Arizona",,1,-7
-Canada/Mountain,"(GMT-07:00) Mountain Time - Edmonton",Canada/Mountain,10,-7
-US/Arizona,"(GMT-07:00) Mountain Time - Arizona",Arizona,23,-7
-America/Denver,"(GMT-07:00) Mountain Time",America/Denver,58,-7
-MST,,"UTC-07:00 Arizona, Chihuahua, La Paz, Mazatlan, Mountain Time (US & Canada)",23,-7
-America/Chicago,"(GMT-06:00) Central Time",America/Chicago,375,-6
-Canada/Central,"(GMT-06:00) Central Time - Winnipeg",Canada/Central,4,-6
-CST,"(GMT-06:00) Central Time","UTC-06:00 Central America, Central Time (US & Canada), Mexico City",158,-6
-Canada/Eastern,"(GMT-05:00) Eastern Time - Toronto",Canada/Eastern,42,-5
-EST,,"UTC-05:00 Bogota, Lima, Quito, Eastern Time (US & Canada), Indiana (East)",58,-5
-America/New_York,"(GMT-05:00) Eastern Time",America/New_York,677,-5
-Canada/Atlantic,"(GMT-04:00) Atlantic Time - Halifax",Canada/Atlantic,6,-4
-PRT,"(GMT-04:00) Puerto Rico","UTC-04:00 Asuncion, Atlantic Time (Canada), San Juan, Santiago",5,-4
-AGT,"(GMT-03:00) Buenos Aires","UTC-03:00 Brasilia, Buenos Aires, Montevideo",24,-3
-Etc/GMT+2,"(GMT-02:00) South Georgia","UTC-02:00 Coordinated Universal Time-02, Mid-Atlantic",4,-2
-GMT,"(GMT+00:00) GMT (no daylight saving)",GMT,438,0
-Europe/Belfast,"(GMT+00:00) London","Europe/Belfast, Dublin, Guernsey, London",98,0
-ECT,"(GMT+01:00) Paris","UTC+01:00 Berlin, Amsterdam, Bern, Rome, Stockholm, Madrid, Paris",37,1
-Europe/Amsterdam,"(GMT+01:00) Amsterdam","Europe/Amsterdam, Copenhagen, Oslo, Paris",37,1
-Israel,"(GMT+02:00) Jerusalem",Israel,3,2
-Europe/Athens,"(GMT+02:00) Athens","Europe/Athens, Bucharest, Chisinau, Helsinki",9,2
-GMT+2,,"UTC+02:00 Helsinki, Athens, Bucharest, Cairo, Pretoria, Sofia",16,2
-EAT,"(GMT+03:00) Nairobi","UTC+03:00 Baghdad, Kuwait, Moscow, Nairobi, Tehran",2,3
-PLT,"(GMT+05:00) Karachi","UTC+05:00 Ekaterinburg, Islamabad, Karachi, Tashkent",2,5
-IST,"(GMT+05:30) India Standard Time","UTC+05:30 Chennai, Kolkata, Mumbai, New Delhi, Sri Jayawardenepura",5,5.5
-VST,"(GMT+07:00) Hanoi","UTC+07:00 Bangkok, Hanoi, Jakarta, Krasnoyarsk",3,7
-Australia/Perth,"(GMT+08:00) Western Time - Perth",Australia/Perth,5,8
-Australia/West,"(GMT+08:00) Western Time - Perth",Australia/West,1,8
-PRC,"(GMT+08:00) China Time - Beijing","UTC+08:00 Beijing, Kuala Lumpur, Singapore, Taipei, Ulaanbaatar",17,8
-JST,"(GMT+09:00) Tokyo","UTC+09:00 Osaka, Sapporo, Tokyo, Seoul, Yakutsk",2,9
-Australia/Adelaide,"(GMT+10:30) Central Time - Adelaide",Australia/Adelaide,3,9.5
-Australia/South,"(GMT+10:30) Central Time - Adelaide",Australia/South,1,9.5
-Australia/Queensland,"(GMT+10:00) Eastern Time - Brisbane",Australia/Queensland,18,10
-Etc/GMT-10,"(GMT+10:00) Port Moresby","UTC+10:00 Canberra, Melbourne, Sydney, Guam, Port Moresby",29,10
-Australia/ACT,"(GMT+11:00) Eastern Time - Melbourne, Sydney",Australia/ACT,26,10
-SST,"(GMT+11:00) Guadalcanal","UTC+11:00 Magadan, Solomon Is., New Caledonia",12,11
-NST,"(GMT+13:00) Auckland","UTC+12:00 Auckland, Wellington, Coordinated Universal Time+12, Fiji",22,12
+ID,"Google Name","LM Name","Account Count",Offset,"Standard Time Abbr","Daylight Saving Abbr","Use Dst"
+Pacific/Samoa,"(GMT-11:00) Pago Pago","UTC-11:00 Coordinated Universal Time-11, Samoa",2,-11,SST,SDT,false
+US/Hawaii,"(GMT-10:00) Hawaii Time",Hawaii,3,-10,HST,HDT,false
+HST,,"UTC-10:00 Hawaii",2,-10,HST,HDT,false
+AST,"(GMT-09:00) Alaska Time","UTC-09:00 Alaska",3,-9,AKST,AKDT,true
+Canada/Pacific,"(GMT-08:00) Pacific Time - Vancouver",Canada/Pacific,8,-8,PST,PDT,true
+PST,"(GMT-08:00) Pacific Time","UTC-08:00 Baja California, Pacific Time (US & Canada)",109,-8,PST,PDT,true
+America/Los_Angeles,"(GMT-08:00) Pacific Time",America/Los_Angeles,417,-8,PST,PDT,true
+PNT,"(GMT-07:00) Mountain Time - Arizona",,1,-7,MST,MDT,false
+Canada/Mountain,"(GMT-07:00) Mountain Time - Edmonton",Canada/Mountain,10,-7,MST,MDT,true
+US/Arizona,"(GMT-07:00) Mountain Time - Arizona",Arizona,23,-7,MST,MDT,false
+America/Denver,"(GMT-07:00) Mountain Time",America/Denver,58,-7,MST,MDT,true
+MST,,"UTC-07:00 Arizona, Chihuahua, La Paz, Mazatlan, Mountain Time (US & Canada)",23,-7,MST,MDT,false
+America/Chicago,"(GMT-06:00) Central Time",America/Chicago,375,-6,CST,CDT,true
+Canada/Central,"(GMT-06:00) Central Time - Winnipeg",Canada/Central,4,-6,CST,CDT,true
+CST,"(GMT-06:00) Central Time","UTC-06:00 Central America, Central Time (US & Canada), Mexico City",158,-6,CST,CDT,true
+Canada/Eastern,"(GMT-05:00) Eastern Time - Toronto",Canada/Eastern,42,-5,EST,EDT,true
+EST,,"UTC-05:00 Bogota, Lima, Quito, Eastern Time (US & Canada), Indiana (East)",58,-5,EST,EDT,false
+America/New_York,"(GMT-05:00) Eastern Time",America/New_York,677,-5,EST,EDT,true
+Canada/Atlantic,"(GMT-04:00) Atlantic Time - Halifax",Canada/Atlantic,6,-4,AST,ADT,true
+PRT,"(GMT-04:00) Puerto Rico","UTC-04:00 Asuncion, Atlantic Time (Canada), San Juan, Santiago",5,-4,AST,ADT,false
+AGT,"(GMT-03:00) Buenos Aires","UTC-03:00 Brasilia, Buenos Aires, Montevideo",24,-3,ART,ARST,false
+Etc/GMT+2,"(GMT-02:00) South Georgia","UTC-02:00 Coordinated Universal Time-02, Mid-Atlantic",4,-2,GMT-02:00,GMT-02:00,false
+GMT,"(GMT+00:00) GMT (no daylight saving)",GMT,438,0,GMT,GMT,false
+Europe/Belfast,"(GMT+00:00) London","Europe/Belfast, Dublin, Guernsey, London",98,0,GMT,BST,true
+ECT,"(GMT+01:00) Paris","UTC+01:00 Berlin, Amsterdam, Bern, Rome, Stockholm, Madrid, Paris",37,1,CET,CEST,true
+Europe/Amsterdam,"(GMT+01:00) Amsterdam","Europe/Amsterdam, Copenhagen, Oslo, Paris",37,1,CET,CEST,true
+Israel,"(GMT+02:00) Jerusalem",Israel,3,2,IST,IDT,true
+Europe/Athens,"(GMT+02:00) Athens","Europe/Athens, Bucharest, Chisinau, Helsinki",9,2,EET,EEST,true
+GMT+2,,"UTC+02:00 Helsinki, Athens, Bucharest, Cairo, Pretoria, Sofia",16,2,,,unknown
+EAT,"(GMT+03:00) Nairobi","UTC+03:00 Baghdad, Kuwait, Moscow, Nairobi, Tehran",2,3,EAT,EAST,false
+PLT,"(GMT+05:00) Karachi","UTC+05:00 Ekaterinburg, Islamabad, Karachi, Tashkent",2,5,PKT,PKST,false
+IST,"(GMT+05:30) India Standard Time","UTC+05:30 Chennai, Kolkata, Mumbai, New Delhi, Sri Jayawardenepura",5,5.5,IST,IDT,false
+VST,"(GMT+07:00) Hanoi","UTC+07:00 Bangkok, Hanoi, Jakarta, Krasnoyarsk",3,7,ICT,ICST,false
+Australia/Perth,"(GMT+08:00) Western Time - Perth",Australia/Perth,5,8,AWST,AWDT,false
+Australia/West,"(GMT+08:00) Western Time - Perth",Australia/West,1,8,AWST,AWDT,false
+PRC,"(GMT+08:00) China Time - Beijing","UTC+08:00 Beijing, Kuala Lumpur, Singapore, Taipei, Ulaanbaatar",17,8,CST,CDT,false
+JST,"(GMT+09:00) Tokyo","UTC+09:00 Osaka, Sapporo, Tokyo, Seoul, Yakutsk",2,9,JST,JDT,false
+Australia/Adelaide,"(GMT+10:30) Central Time - Adelaide",Australia/Adelaide,3,9.5,ACST,ACDT,true
+Australia/South,"(GMT+10:30) Central Time - Adelaide",Australia/South,1,9.5,ACST,ACDT,true
+Australia/Queensland,"(GMT+10:00) Eastern Time - Brisbane",Australia/Queensland,18,10,AEST,AEDT,false
+Etc/GMT-10,"(GMT+10:00) Port Moresby","UTC+10:00 Canberra, Melbourne, Sydney, Guam, Port Moresby",29,10,GMT+10:00,GMT+10:00,false
+Australia/ACT,"(GMT+11:00) Eastern Time - Melbourne, Sydney",Australia/ACT,26,10,AEST,AEDT,true
+SST,"(GMT+11:00) Guadalcanal","UTC+11:00 Magadan, Solomon Is., New Caledonia",12,11,SBT,SBST,false
+NST,"(GMT+13:00) Auckland","UTC+12:00 Auckland, Wellington, Coordinated Universal Time+12, Fiji",22,12,NZST,NZDT,true

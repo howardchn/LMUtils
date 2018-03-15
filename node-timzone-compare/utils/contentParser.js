@@ -60,6 +60,13 @@ function parseUniqLMInUsingTimezones(content) {
     return _.uniq(content.split('\n').map(s => s.trim()).filter(s => !_.isNil(s) && !_.isEmpty(s) && !s.startsWith('SERVER:')));
 }
 
+function parseAbbrs(content) {
+    return content.split('\n').map(row => {
+        const items = row.split('\t');
+        return { id: items[0], dst: items[1], sdt: items[2], useDst: items[3] };
+    });
+}
+
 module.exports = {
     parseGoogleTimezone, 
     parseLMTimezone, 
@@ -67,5 +74,6 @@ module.exports = {
     parseDuplication, 
     parseTimezoneOffsets,
     parseLMInUsingTimezones,
-    parseUniqLMInUsingTimezones
+    parseUniqLMInUsingTimezones,
+    parseAbbrs
 }
