@@ -250,7 +250,9 @@ const gtzids = gTimezones.map(tz => {
     if(nameStart >= 0) {
         name = name.substr(nameStart + 2);
     }
-    return {id, name};
+
+    const dst = findAbbrs(timezoneAbbrs, id).useDst;
+    return {id, name, dst};
 });
 const output = JSON.stringify(gtzids);
 writeTableDataToFile('google_timezone_ids', output);
