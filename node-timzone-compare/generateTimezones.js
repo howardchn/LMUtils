@@ -10,7 +10,8 @@ const {
     parseLMInUsingTimezones,
     parseUniqLMInUsingTimezones,
     parseAbbrs
-} = require('./utils/contentParser')
+} = require('./utils/contentParser');
+const zones = require('./timezones/timezone_meta');
 
 function generateTimezones(sourceFilename, parseTimezone) {
     const data = getTimezones(sourceFilename, parseTimezone);
@@ -35,7 +36,6 @@ function nameOrDefault(content, d = '') {
 }
 
 function csv(rows) {
-    console.log(rows);
     return rows.map(row => row.map(s => s.includes(' ') ? `"${s}"` : s).join(',')).join('\r\n');
 }
 
@@ -153,7 +153,10 @@ function formattedTimeZoneName(item) {
 
 function findLMAlt(lmtzs, id, dups) {
     const dupRow = _.find(dups, r => r.includes(id));
-    if (_.isUndefined(dupRow)) return [];
+    if (_.isUndefined(dupRow)) {
+        const unDuplicatedItem = _.filter(lmtzs, lmr => lmr.id === id);
+        return unDuplicatedItem || [];
+    }
 
     const lmItems = _.filter(lmtzs, lmr => dupRow.includes(lmr.id));
     return lmItems || [];
@@ -173,17 +176,30 @@ function compareBasedOnGoogle(filename, gtzs, lmtzs, dups, tzoffsets) {
     const result = [
         ["ID", "Google Name", "LogicMonitor Name", "Offset"]
     ];
+
+    const excluded = [];
     for (let gtz of gtzs) {
+        if(gtz.id === 'America/Caracas') {
+        }
         const tzOffset = findOffset(gtz.id, tzoffsets);
         let lmItems = findLMAlt(lmtzs, gtz.id, dups);
-        let lmName = lmItems.map(i => formattedTimeZoneName(i)).join(', ');
-        _.remove(lmtzs, i => lmItems.includes(i));
 
+        let lmName = lmItems.map(i => formattedTimeZoneName(i)).join(', ');
+        if(lmItems.length > 0) {
+            for(let i of lmItems) {
+                if(!_.includes(excluded, i.id)) {
+                    excluded.push(i.id);
+                }
+            }
+        }
+        
         const gtzName = gtz.name.includes(' ') ? `"${gtz.name}"` : gtz.name;
         result.push([gtz.id, gtz.name, lmName, tzOffset.toString()]);
     }
 
-    const notMatchedResult = [...lmtzs.map(item => [item.id, item.name, findOffset(item.id, tzoffsets).toString()])];
+    //const notMatchedResult = [...lmtzs.map(item => [item.id, item.name, findOffset(item.id, tzoffsets).toString()])];
+    const notMatchedResult = [...lmtzs.filter(z => !excluded.includes(z.id)).map(item => [item.id, item.name, findOffset(item.id, tzoffsets).toString()])];
+    // console.log(notMatchedResult);
 
     const output = csv(result);
     const output_notMatched = csv(notMatchedResult);
@@ -222,6 +238,48 @@ function compareCommonUsed(commonTimezones, googleTimezones, lmTimezones, tzoffs
     return result;
 }
 
+function generateGoogleTimezoneIds(gTimezones, timezoneAbbrs) {
+    const gtzids = gTimezones.map(tz => {
+        const id = tz.id;
+        let name = tz.name;
+        const nameStart = name.indexOf(') ')
+        if(nameStart >= 0) {
+            name = name.substr(nameStart + 2);
+        }
+        const dst = findAbbrs(timezoneAbbrs, id).useDst;
+        return {id, name, dst};
+    });
+    const output = JSON.stringify(gtzids);
+    writeTableDataToFile('google_timezone_ids', output);
+}
+
+function generateGoogleTimezoneInfos(gTimezones, timezoneAbbrs) {
+    const gtzids = gTimezones.map(tz => {
+        const id = tz.id;
+        let name = tz.name;
+        const nameStart = name.indexOf(') ')
+        if(nameStart >= 0) {
+            name = name.substr(nameStart + 2);
+        }
+        const abbr = findAbbrs(timezoneAbbrs, id);
+        return {id, name, 'dst':abbr.dst, 'st':abbr.sdt};
+    });
+    const output = JSON.stringify(gtzids);
+    writeTableDataToFile('google_timezone_infos', output);
+}
+
+function generateGoogleTimezonesLocations(gTimezones) {
+    const gtzids = gTimezones.map(tz => {
+        const id = tz.id;
+        const zi = _.pickBy(zones, entry => entry.name === id);
+        const lat = _.get(zi[id], 'lat');
+        const long = _.get(zi[id], 'long');
+        return {id, lat, long};
+    });
+    const output = JSON.stringify(gtzids);
+    writeTableDataToFile('google_timezone_coords', output);
+}
+
 /** generate formatted timezones */
 // generateTimezones('gtimezones', parseGoogleTimezone);
 // generateTimezones('lmtimezones', parseLMTimezone);
@@ -237,22 +295,12 @@ const timezoneAbbrs = getTimezones('timezone_abbrs', parseAbbrs);
 
 //compare(allTimezones, lmTimezones, gTimezones, true, true);
 //compareAndSort(allTimezones, lmTimezones, gTimezones, true);
-// compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
+compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
 
 // const list = compareCommonUsed(timezonesInUsing, gTimezones, lmTimezones, timezoneOffsets, duplications, timezoneAbbrs);
 // const output = csv(list);
 // writeTableDataToFile('common_used_timezones', output);
 
-const gtzids = gTimezones.map(tz => {
-    const id = tz.id;
-    let name = tz.name;
-    const nameStart = name.indexOf(') ')
-    if(nameStart >= 0) {
-        name = name.substr(nameStart + 2);
-    }
-
-    const dst = findAbbrs(timezoneAbbrs, id).useDst;
-    return {id, name, dst};
-});
-const output = JSON.stringify(gtzids);
-writeTableDataToFile('google_timezone_ids', output);
+// generateGoogleTimezoneIds(gTimezones, timezoneAbbrs);
+// generateGoogleTimezonesLocations(gTimezones);
+// generateGoogleTimezoneInfos(gTimezones, timezoneAbbrs);

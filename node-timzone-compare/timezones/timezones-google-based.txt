@@ -49,7 +49,7 @@ America/Barbados,"(GMT-04:00) Barbados",,-4
 Atlantic/Bermuda,"(GMT-04:00) Bermuda",,-4
 America/Boa_Vista,"(GMT-04:00) Boa Vista",,-4
 America/Campo_Grande,"(GMT-04:00) Campo Grande",,-4
-America/Caracas,"(GMT-04:00) Caracas",,-4
+America/Caracas,"(GMT-04:00) Caracas","America/Caracas (UTC-04:30 Caracas)",-4
 America/Cuiaba,"(GMT-04:00) Cuiaba",,-4
 America/Curacao,"(GMT-04:00) Curacao",,-4
 America/Grand_Turk,"(GMT-04:00) Grand Turk",,-4
@@ -84,7 +84,7 @@ America/Sao_Paulo,"(GMT-03:00) Sao Paulo",,-3
 Atlantic/Stanley,"(GMT-03:00) Stanley",,-3
 America/Noronha,"(GMT-02:00) Noronha",,-2
 Atlantic/South_Georgia,"(GMT-02:00) South Georgia","Etc/GMT+2 (UTC-02:00 Coordinated Universal Time-02, Mid-Atlantic)",-2
-Atlantic/Azores,"(GMT-01:00) Azores",,-1
+Atlantic/Azores,"(GMT-01:00) Azores","Atlantic/Azores (UTC-01:00 Azores, Cape Verde Is.)",-1
 Atlantic/Cape_Verde,"(GMT-01:00) Cape Verde",,-1
 America/Scoresbysund,"(GMT-01:00) Scoresbysund",,-1
 Africa/Abidjan,"(GMT+00:00) Abidjan",,0
@@ -101,9 +101,9 @@ Europe/Lisbon,"(GMT+00:00) Lisbon",,0
 Europe/London,"(GMT+00:00) London","Europe/Belfast (Europe/Belfast, Dublin, Guernsey, London)",0
 Africa/Monrovia,"(GMT+00:00) Monrovia",,0
 Atlantic/Reykjavik,"(GMT+00:00) Reykjavik",,0
-UTC,UTC,,0
+UTC,UTC,"GMT (GMT), GMT (UTC Dublin, Lisbon, London, Monrovia, Reykjavik)",0
 Africa/Algiers,"(GMT+01:00) Algiers",,1
-Europe/Amsterdam,"(GMT+01:00) Amsterdam",,1
+Europe/Amsterdam,"(GMT+01:00) Amsterdam","Europe/Amsterdam (Europe/Amsterdam, Copenhagen, Oslo, Paris)",1
 Europe/Andorra,"(GMT+01:00) Andorra",,1
 Europe/Berlin,"(GMT+01:00) Berlin",,1
 Europe/Brussels,"(GMT+01:00) Brussels",,1
@@ -130,7 +130,7 @@ Europe/Vienna,"(GMT+01:00) Vienna",,1
 Europe/Warsaw,"(GMT+01:00) Warsaw",,1
 Europe/Zurich,"(GMT+01:00) Zurich",,1
 Asia/Amman,"(GMT+02:00) Amman",,2
-Europe/Athens,"(GMT+02:00) Athens",,2
+Europe/Athens,"(GMT+02:00) Athens","Europe/Athens (Europe/Athens, Bucharest, Chisinau, Helsinki)",2
 Asia/Beirut,"(GMT+02:00) Beirut",,2
 Europe/Bucharest,"(GMT+02:00) Bucharest",,2
 Africa/Cairo,"(GMT+02:00) Cairo",,2
@@ -164,11 +164,11 @@ Asia/Baku,"(GMT+04:00) Baku",,4
 Asia/Dubai,"(GMT+04:00) Dubai",,4
 Indian/Mahe,"(GMT+04:00) Mahe",,4
 Indian/Mauritius,"(GMT+04:00) Mauritius",,4
-Europe/Samara,"(GMT+04:00) Moscow+01 - Samara",,4
+Europe/Samara,"(GMT+04:00) Moscow+01 - Samara","Europe/Samara (Europe/Samara)",4
 Indian/Reunion,"(GMT+04:00) Reunion",,4
 Asia/Tbilisi,"(GMT+04:00) Tbilisi",,4
 Asia/Yerevan,"(GMT+04:00) Yerevan","NET (UTC+04:00 Abu Dhabi, Muscat, Baku, Port Louis, Tbilisi, Yerevan)",4
-Asia/Kabul,"(GMT+04:30) Kabul",,4.5
+Asia/Kabul,"(GMT+04:30) Kabul","Asia/Kabul (UTC+04:30 Kabul)",4.5
 Asia/Aqtau,"(GMT+05:00) Aqtau",,5
 Asia/Aqtobe,"(GMT+05:00) Aqtobe",,5
 Asia/Ashgabat,"(GMT+05:00) Ashgabat",,5
