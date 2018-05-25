@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const fs = require('fs');
 const _ = require('lodash');
 const { table } = require('table');
@@ -126,7 +127,7 @@ function compareAndSort(all, lm, g, useCsv) {
     if (useCsv) filename += '_csv';
 
     const output = useCsv ? csv(result) : table(result);
-    return writeTableDataToFile(filename, output)
+    return writeTableDataToFile(filename, output);
 }
 
 function getUTC(str) {
@@ -242,7 +243,7 @@ function generateGoogleTimezoneIds(gTimezones, timezoneAbbrs) {
     const gtzids = gTimezones.map(tz => {
         const id = tz.id;
         let name = tz.name;
-        const nameStart = name.indexOf(') ')
+        const nameStart = name.indexOf(') ');
         if(nameStart >= 0) {
             name = name.substr(nameStart + 2);
         }
@@ -257,7 +258,7 @@ function generateGoogleTimezoneInfos(gTimezones, timezoneAbbrs) {
     const gtzids = gTimezones.map(tz => {
         const id = tz.id;
         let name = tz.name;
-        const nameStart = name.indexOf(') ')
+        const nameStart = name.indexOf(') ');
         if(nameStart >= 0) {
             name = name.substr(nameStart + 2);
         }
