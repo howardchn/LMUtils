@@ -3,7 +3,7 @@ const csv = require('csv');
 const _ = require('lodash');
 const { table } = require('table');
 
-let csvPath = './resources/search-results-2018-05-31T23_23_23.226-0700.csv';
+let csvPath = './resources/search-results-2018-06-14T19_36_48.134-0700.csv';
 let csvContent = fs.readFileSync(csvPath, 'utf8');
 csv.parse(csvContent, (err, data) => {
     if(err !== null) {
@@ -38,14 +38,14 @@ csv.parse(csvContent, (err, data) => {
         // console.log(log.pod, log.company, log.count);
     });
 
-    let groupByPod = _.groupBy(logObjects, o => o[0]);
-    for(let i in groupByPod) {
-        console.log(i, groupByPod[i].length);
-    }
+    // let groupByPod = _.groupBy(logObjects, o => o[0]);
+    // for(let i in groupByPod) {
+    //     console.log(i, groupByPod[i].length);
+    // }
 
-    // let logTable = table(logObjects);
-    // console.log(logObjects.length + ' companies used API to recover their devices and groups in last 30 days');
-    // console.log(logTable);
+    let logTable = table(logObjects);
+    console.log(logObjects.length + ' companies used API to recover their devices and groups in last 30 days');
+    console.log(logTable);
 
-    // fs.writeFileSync('./result.txt', logTable, 'utf8');
+    fs.writeFileSync('./result.txt', logTable, 'utf8');
 });

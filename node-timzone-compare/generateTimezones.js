@@ -296,7 +296,7 @@ const timezoneAbbrs = getTimezones('timezone_abbrs', parseAbbrs);
 
 //compare(allTimezones, lmTimezones, gTimezones, true, true);
 //compareAndSort(allTimezones, lmTimezones, gTimezones, true);
-compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
+//compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplications, timezoneOffsets);
 
 // const list = compareCommonUsed(timezonesInUsing, gTimezones, lmTimezones, timezoneOffsets, duplications, timezoneAbbrs);
 // const output = csv(list);
@@ -305,3 +305,22 @@ compareBasedOnGoogle('timezones-google-based', gTimezones, lmTimezones, duplicat
 // generateGoogleTimezoneIds(gTimezones, timezoneAbbrs);
 // generateGoogleTimezonesLocations(gTimezones);
 // generateGoogleTimezoneInfos(gTimezones, timezoneAbbrs);
+
+let momentTzs = require('./timezones/2017a.json');
+let tzs = new Set();
+
+momentTzs.zones.forEach(tz => tzs.add(tz.slice(0, tz.indexOf('|'))));
+momentTzs.links.forEach(tz => {
+    if(tz.indexOf('|') !== -1) {
+        tz.split('|').forEach(t => tzs.add(t));
+    }
+})
+
+// console.log(allTimezones.length);
+// console.log(tzs.size);
+
+let tzsArray = [...tzs];
+let momentNotSupported = allTimezones.map(t => t.id).filter(t => !tzsArray.includes(t));
+
+console.log(momentNotSupported.length);
+console.log(momentNotSupported);
